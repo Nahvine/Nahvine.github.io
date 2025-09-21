@@ -347,3 +347,33 @@ ScrollReveal().reveal('.sr-lang', {
   // responsive
   window.addEventListener('resize', ()=> moveTo(active));
 })();
+/* ===== Language progress on scroll (replay every time) ===== */
+(function () {
+  const bars = document.querySelectorAll('.lang__bar');
+  if (!bars.length || !('IntersectionObserver' in window)) return;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // vào tầm nhìn → chạy tiến trình (ease-out)
+        entry.target.classList.add('is-inview');
+      } else {
+        // ra khỏi tầm nhìn → reset về 0 để lần sau vào lại sẽ chạy tiếp
+        entry.target.classList.remove('is-inview');
+
+        // optional: đảm bảo reset width ngay (tránh kẹt state nếu tab bị background)
+        const fill = entry.target.querySelector('.lang__fill');
+        if (fill) {
+          fill.style.transition = 'none';
+          fill.offsetHeight;              // force reflow
+          fill.style.transition = '';     // trả lại transition từ CSS
+        }
+      }
+    });
+  }, {
+    threshold: [0, 0.35, 1],       // nhìn thấy ~35% mới chạy
+    rootMargin: '0px 0px -10% 0px' // tránh flicker ở rìa dưới
+  });
+
+  bars.forEach(b => io.observe(b));
+})();

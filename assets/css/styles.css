@@ -1229,27 +1229,23 @@ body.light-theme {
   color: var(--first-color);
 }
 
-/* GRID cho 2 box ngôn ngữ */
+/* ==== Language cards: nhỏ gọn hơn (mỗi box ~ nửa hiện tại) ==== */
 .lang__grid{
   display:grid;
-  grid-template-columns: repeat(2, minmax(280px, 1fr)); /* 2 cột bằng nhau */
-  gap: 3rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
   align-items: start;
 }
-@media (max-width: 768px){
-  .lang__grid{ grid-template-columns: 1fr; }
+
+/* Giới hạn chiều ngang mỗi card để ngắn lại ~1/2 hiện tại */
+.lang__box{
+  width: 100%;
+  max-width: 520px;          /* <- chỉnh số này nếu muốn ngắn hơn (ví dụ 460px) */
+  margin-inline: auto;       /* căn giữa trong cột */
+  padding: 1.25rem 1.5rem;   /* có thể giảm padding nếu muốn card thấp hơn */
 }
 
-/* Card */
-.lang__box{
-  width: 100%;                 /* fill hết cột */
-  max-width: unset;            /* bỏ giới hạn 420px để không lệch */
-  box-sizing: border-box;
-  padding: 1.5rem;
-  border: 1px solid transparent;
-  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-  border-radius: 20px;         /* nếu bạn đang dùng */
-}
+
 .lang__box:hover{
   transform: translateY(-4px);
   box-shadow: 0 8px 28px hsla(var(--second-hue),48%,8%,.25);
@@ -1264,25 +1260,37 @@ body.light-theme {
 .lang__row span{ font-size:1.1rem; transform:translateY(1px); }
 .lang__name{ font-size:var(--small-font-size); color:var(--title-color); }
 
-/* progress */
+/* Thanh progress nền */
 .lang__bar{
-  width: 100%;                 /* ép thanh nền chiếm đủ bề ngang */
-  margin-top:.6rem; height:8px; overflow:hidden; border-radius:999px;
+  width:100%;
+  height:10px;
+  margin-top:.75rem;
+  overflow:hidden;
+  border-radius:999px;
   background: hsla(var(--second-hue),12%,22%,.9);
 }
+/* Thanh progress chạy: đổi từ keyframes sang transition để trigger khi vào viewport */
 .lang__fill{
-  display: block;              /* để width/height có hiệu lực */
-  width: 0; height:100%;
+  display:block;
+  width:0;                   /* bắt đầu từ 0% */
+  height:100%;
   background: linear-gradient(90deg, var(--first-color), var(--first-color-alt));
-  animation: langGrow .9s ease forwards;
+  transition: width 3.2s cubic-bezier(.15,.85,.2,1); /* cuối chậm, mượt */
+  will-change: width;
 }
+/* Khi ô progress vào tầm nhìn, set width về giá trị đích */
+.lang__bar.is-inview .lang__fill{
+  width: var(--val);
+}
+
 @keyframes langGrow{ to{ width: var(--val); } }
 
 
 /* responsive */
-@media (max-width: 576px){
+/* Mobile: 1 cột */
+@media (max-width: 768px){
   .lang__grid{ grid-template-columns: 1fr; }
-  .lang__kicker{ margin-top: 2rem; }
+  .lang__box{ max-width: 560px; } /* thoáng hơn trên mobile rộng */
 }
 /* === Header hover-follow indicator === */
 .nav__menu { position: fixed; } /* đã có, giữ để indicator bám menu */
