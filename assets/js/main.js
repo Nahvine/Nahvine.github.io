@@ -231,3 +231,119 @@ sr.reveal(`.footer, footer__container`, {
   origin: "bottom",
   distance: "30px",
 });
+/* ScrollReveal for Languages */
+ScrollReveal().reveal('.sr-lang', {
+  origin: 'bottom',
+  distance: '20px',
+  duration: 600,
+  interval: 100
+});
+
+/* === Moving pill indicator on hover + return to active === */
+(function(){
+  const menu = document.querySelector('.nav__menu');
+  if(!menu) return;
+
+  const links = menu.querySelectorAll('.nav__link');
+  const indicator = menu.querySelector('.nav__indicator');
+  if(!indicator || !links.length) return;
+
+  let active = menu.querySelector('.nav__link.active-link') || links[0];
+
+  function moveTo(el){
+    const m = menu.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const x = r.left - m.left;
+    const y = r.top  - m.top;
+    indicator.style.width  = r.width + 'px';
+    indicator.style.height = r.height + 'px';
+    indicator.style.transform = `translate(${x}px, ${y}px)`;
+    menu.classList.add('has-indicator');
+  }
+
+  // init at active
+  moveTo(active);
+
+  // hover follow
+  links.forEach(l=>{
+    l.addEventListener('mouseenter', ()=> moveTo(l));
+    l.addEventListener('click', ()=>{
+      links.forEach(a=>a.classList.remove('active-link'));
+      l.classList.add('active-link');
+      active = l;
+      moveTo(active);
+    });
+  });
+
+  // leave: return to active
+  menu.addEventListener('mouseleave', ()=> moveTo(active));
+
+  // responsive: recalc on resize/scroll
+  window.addEventListener('resize', ()=> moveTo(active));
+})();
+/* === Work filter moving indicator (hover + active + click animation) === */
+(function(){
+  const wrap = document.querySelector('.work__filters');
+  if(!wrap) return;
+
+  const items = wrap.querySelectorAll('.work__item');
+  const indi  = wrap.querySelector('.work__indicator');
+  if(!indi || !items.length) return;
+
+  let active = wrap.querySelector('.active-work') || items[0];
+
+  function moveTo(el, withSnap=false){
+    const c = wrap.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const x = r.left - c.left;
+    const y = r.top  - c.top;
+    indi.style.width  = r.width + 'px';
+    indi.style.height = r.height + 'px';
+    // thêm snap easing nhẹ khi gọi từ click
+    indi.classList.toggle('snap', !!withSnap);
+    indi.style.transform = `translate(${x}px, ${y}px)`;
+    wrap.classList.add('has-indicator');
+  }
+
+  // init
+  moveTo(active);
+
+  // hover -> chạy tới item
+  items.forEach(it=>{
+    it.addEventListener('mouseenter', ()=> moveTo(it));
+    it.addEventListener('focus', ()=> moveTo(it)); // keyboard
+  });
+
+  // click -> set active + pulse + press
+  function pressFeedback(el){
+    el.classList.add('is-press');
+    indi.classList.add('pulse');
+    // xoá class sau animation
+    setTimeout(()=> el.classList.remove('is-press'), 160);
+    indi.addEventListener('animationend', ()=> indi.classList.remove('pulse'), {once:true});
+  }
+
+  items.forEach(it=>{
+    it.addEventListener('click', ()=>{
+      items.forEach(a=>a.classList.remove('active-work'));
+      it.classList.add('active-work');
+      active = it;
+      moveTo(active, true);   // snap easing
+      pressFeedback(it);
+    });
+
+    // keyboard: Enter/Space
+    it.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        it.click();
+      }
+    });
+  });
+
+  // rời chuột -> quay về active
+  wrap.addEventListener('mouseleave', ()=> moveTo(active));
+
+  // responsive
+  window.addEventListener('resize', ()=> moveTo(active));
+})();

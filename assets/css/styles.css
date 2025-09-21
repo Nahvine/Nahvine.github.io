@@ -1217,3 +1217,184 @@ body.light-theme {
     border-radius: 0.5rem;
   }
 }
+
+/* ===== Languages (inside About) ===== */
+.lang__kicker{           /* nhấn giống subtitle của section */
+  margin-top: 2.25rem;   /* tách khỏi khối About phía trên */
+  text-align:center;
+}
+.lang__title{            /* tiêu đề riêng, liên kết với About Me */
+  margin: .25rem 0 1.25rem;
+  text-align:center;
+  color: var(--first-color);
+}
+
+/* GRID cho 2 box ngôn ngữ */
+.lang__grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr)); /* 2 cột bằng nhau */
+  gap: 3rem;
+  align-items: start;
+}
+@media (max-width: 768px){
+  .lang__grid{ grid-template-columns: 1fr; }
+}
+
+/* Card */
+.lang__box{
+  width: 100%;                 /* fill hết cột */
+  max-width: unset;            /* bỏ giới hạn 420px để không lệch */
+  box-sizing: border-box;
+  padding: 1.5rem;
+  border: 1px solid transparent;
+  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  border-radius: 20px;         /* nếu bạn đang dùng */
+}
+.lang__box:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px hsla(var(--second-hue),48%,8%,.25);
+  border-color: hsla(var(--first-hue), var(--sat), var(--lig), .35);
+}
+
+/* header row */
+.lang__row{
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  margin-bottom:.35rem;
+}
+.lang__row span{ font-size:1.1rem; transform:translateY(1px); }
+.lang__name{ font-size:var(--small-font-size); color:var(--title-color); }
+
+/* progress */
+.lang__bar{
+  width: 100%;                 /* ép thanh nền chiếm đủ bề ngang */
+  margin-top:.6rem; height:8px; overflow:hidden; border-radius:999px;
+  background: hsla(var(--second-hue),12%,22%,.9);
+}
+.lang__fill{
+  display: block;              /* để width/height có hiệu lực */
+  width: 0; height:100%;
+  background: linear-gradient(90deg, var(--first-color), var(--first-color-alt));
+  animation: langGrow .9s ease forwards;
+}
+@keyframes langGrow{ to{ width: var(--val); } }
+
+
+/* responsive */
+@media (max-width: 576px){
+  .lang__grid{ grid-template-columns: 1fr; }
+  .lang__kicker{ margin-top: 2rem; }
+}
+/* === Header hover-follow indicator === */
+.nav__menu { position: fixed; } /* đã có, giữ để indicator bám menu */
+.nav__list .nav__link { position: relative; z-index: 1; } /* nằm trên indicator */
+
+.nav__indicator{
+  position: absolute;
+  top: 0; left: 0;
+  width: 44px; height: 44px; /* sẽ được set động bằng JS */
+  border-radius: 5rem;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    hsla(var(--first-hue), var(--sat), var(--lig), .50),
+    hsla(var(--first-hue), var(--sat), var(--lig), .20)
+  );
+  box-shadow: 0 0 16px hsla(var(--first-hue), var(--sat), var(--lig), .40);
+  transform: translate3d(0,0,0);
+  transition:
+    transform .28s cubic-bezier(.2,.7,.2,1),
+    width .28s cubic-bezier(.2,.7,.2,1),
+    height .28s cubic-bezier(.2,.7,.2,1),
+    opacity .2s ease;
+    /* gốc ripple – JS sẽ set */
+  --rx: 50%;
+  --ry: 50%;
+}
+.nav__menu.has-indicator .nav__indicator { opacity: 1; }
+
+/* Dùng indicator làm highlight nên tắt nền mặc định của .active-link */
+.nav__link.active-link{
+  background: transparent;
+  box-shadow: none;
+  color: var(--title-color);
+}
+/* --- Work filter indicator (single pill) --- */
+.work__filters{ position: relative; }
+
+/* TẮT nền của item & active-work, chỉ để text */
+.work__item{
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: .8rem;
+  padding: .45rem .9rem;           /* pill spacing */
+  transition: color .25s ease, transform .25s ease;
+}
+.work__item:hover{
+  transform: translateY(-2px);
+}
+.work__item.active-work{
+  color: var(--title-color);        /* nhấn chữ cho tab đang chọn */
+  font-weight: var(--font-medium);
+  background: transparent !important;
+}
+
+/* Pill indicator chạy bên dưới chữ */
+.work__indicator{
+  position: absolute;
+  left: 0; top: 0;
+  width: 0; height: 0;             /* set bằng JS */
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    hsla(var(--first-hue), var(--sat), var(--lig), .50),
+    hsla(var(--first-hue), var(--sat), var(--lig), .20)
+  );
+  box-shadow: 0 6px 18px hsla(var(--first-hue), var(--sat), var(--lig), .35);
+  transition:
+    transform .28s cubic-bezier(.2,.7,.2,1),
+    width .28s cubic-bezier(.2,.7,.2,1),
+    height .28s cubic-bezier(.2,.7,.2,1),
+    opacity .18s ease;
+}
+.work__filters.has-indicator .work__indicator{ opacity: 1; }
+/* Click press on item */
+.work__item.is-press{
+  transform: translateY(-1px) scale(.97);
+  filter: brightness(1.02);
+  transition: transform .12s ease, filter .2s ease;
+}
+
+/* Indicator pulse on click */
+.work__indicator.pulse{
+  animation: indiPulse .42s ease-out;
+}
+@keyframes indiPulse{
+  0%{
+    box-shadow: 0 0 0 0 hsla(var(--first-hue), var(--sat), var(--lig), .40),
+                0 6px 18px hsla(var(--first-hue), var(--sat), var(--lig), .35);
+  }
+  100%{
+    box-shadow: 0 0 0 18px hsla(var(--first-hue), var(--sat), var(--lig), 0),
+                0 6px 18px hsla(var(--first-hue), var(--sat), var(--lig), .18);
+  }
+}
+
+/* (tuỳ chọn) micro-bounce sau khi indicator dừng */
+.work__indicator.snap{
+  transition-timing-function: cubic-bezier(.2,.9,.2,1.1);
+}
+
+/* ấn nhẹ trên link khi click */
+.nav__link.is-tap{
+  transform: translateY(-1px) scale(.98);
+  filter: brightness(1.04);
+  transition: transform .12s ease, filter .18s ease;
+}
+
